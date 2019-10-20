@@ -19,6 +19,9 @@ class Game {
                 this.blocks[i].push(null);
             }
         }
+
+        //test block - TO DELETE
+        this.blocks[3][4] = new BreakableBlock();
     }
 
     draw() {
@@ -74,7 +77,10 @@ const setupCanvas = () => {
 //Function called when the page is ready, which sets up the canvas and initializes a new game.
 const initGame = () => {
     const ctx = setupCanvas();
-    let game =  Game(ctx);
+    let game = new Game(ctx);
+
+    //redraw the game every 20 miliseconds
+    setInterval(() => game.draw(), 20);
 }
 
 
