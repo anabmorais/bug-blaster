@@ -91,14 +91,14 @@ class Block {
 //extends the class block - the breakable block has an image source
 class BreakableBlock extends Block {
   constructor() {
-    super("./images/breakable_block.jpg");
+    super("./images/tile_rock_brown@3x.png");
   }
 }
 
 //extends the class block - the unbreakable block has an image source
 class UnbreakableBlock extends Block {
   constructor() {
-    super("./images/unbreakable_block.jpg");
+    super("./images/tile_wall5@3x.png");
   }
 }
 
