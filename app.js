@@ -6,27 +6,56 @@ const GAME_CANVAS_WIDTH = NUM_BLOCKS_HORIZONTAL * BLOCK_SIZE;
 const GAME_CANVAS_HEIGHT = NUM_BLOCKS_VERTICAL * BLOCK_SIZE;
 const BACKGROUND_COLOR = "#EEEEEE";
 const FRACTION_BREAKABLE_BLOCKS = 0.4;
+const CHARACTER_SIZE = 60;
+
+
+
+
+
+
+class MainCharacter {
+  constructor() {
+    this.img = new Image();
+    this.img.src = "./images/character.jpg";
+    this.width = CHARACTER_SIZE;
+    this.height = CHARACTER_SIZE;
+    this.x = 0;
+    this.y = 0;
+    
+  }
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+}
+
+let character = new MainCharacter();
+
+
+
+
+
+
 
 //Main Game Class
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
     //initialize the array (of arrays) - game board (where the blocks are!)
-    this.blocks = []; 
+    this.blocks = [];
 
     //initialize an array that stores the positions that are not occupied (in the form of objects)
-    const emptyPositions = []; 
+    const emptyPositions = [];
     //Iterates over the vertical blocks and generates that number of arrays (in the "main" array)
-    for (let i = 0; i < NUM_BLOCKS_VERTICAL; i++) { 
+    for (let i = 0; i < NUM_BLOCKS_VERTICAL; i++) {
       this.blocks.push([]);
       // Iterates over the horizontal blocks and if both indexes are odd genereate unbreakable blocks
-      for (let j = 0; j < NUM_BLOCKS_HORIZONTAL; j++) { 
-        if (i % 2 !== 0 && j % 2 !== 0) { 
-          this.blocks[i].push(new UnbreakableBlock()); 
+      for (let j = 0; j < NUM_BLOCKS_HORIZONTAL; j++) {
+        if (i % 2 !== 0 && j % 2 !== 0) {
+          this.blocks[i].push(new UnbreakableBlock());
           // "else" push null into the array of blocks
-        } else { 
-            this.blocks[i].push(null); // fills the array of blocks with null where there are no unbreakable blocks
-            
+        } else {
+          this.blocks[i].push(null); // fills the array of blocks with null where there are no unbreakable blocks
+
           //To prevent boxing in the player without escape during the first iteration, the positions [0,0], [0,1] and [1,0] can't be ocupied by breakable blocks
           //To do that, this positions will be excluded from the emptyPositions array - the position for the breakable block will be randomly choosed from there.
           if (i > 1 || j > 1) {
@@ -41,7 +70,7 @@ class Game {
     const numBreakableBlock = Math.floor(FRACTION_BREAKABLE_BLOCKS * emptyPositions.length);
     //iterates over each breakable block
     for (let i = 0; i < numBreakableBlock; i++) {
-      //Determines a random index in the emptyPositions array - between 0 and the initial length of the array  
+      //Determines a random index in the emptyPositions array - between 0 and the initial length of the array
       const emptyPositionIndex = Math.floor(Math.random() * emptyPositions.length);
       // Selects the object in the emptyPositions array on the random index determined
       const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
@@ -60,10 +89,10 @@ class Game {
     //draw blocks
     //iterates over the rows in the blocks array of arrays
     for (let i = 0; i < this.blocks.length; i++) {
-       //iterates over the columns in that row 
+      //iterates over the columns in that row
       for (let j = 0; j < this.blocks[i].length; j++) {
-         //block at i, j
-         const block = this.blocks[i][j]; 
+        //block at i, j
+        const block = this.blocks[i][j];
         // if the position is not free
         if (block !== null) {
           //draw the block (see class Block)
@@ -71,8 +100,19 @@ class Game {
         }
       }
     }
+    character.draw(this.ctx);
   }
 }
+
+
+
+
+
+
+
+
+
+
 
 //Main class of blocks. Has 1 method - draw()
 class Block {
@@ -102,6 +142,55 @@ class UnbreakableBlock extends Block {
   }
 }
 
+
+
+
+
+
+
+
+document.onkeydown = function(e) {
+  
+   
+  switch(e.keyCode) {
+    case 37: // left
+      if(character.x > 0){
+        character.x -= BLOCK_SIZE;
+      }
+      break;
+    case 38: //
+      if(character.y > 0){
+        character.y -= BLOCK_SIZE;
+      }
+      break;
+    case 39: // right
+      if (character.x < GAME_CANVAS_WIDTH - BLOCK_SIZE ){
+        character.x += BLOCK_SIZE;
+      }
+      break;
+    case 40: // down
+      if (character.y < GAME_CANVAS_HEIGHT - BLOCK_SIZE){
+        character.y += BLOCK_SIZE;
+      }
+      break;	
+  }	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //sets the dimensions of the canvas based on game parameters and return canvas context
 const setupCanvas = () => {
   const canvas = document.getElementById("game");
@@ -115,6 +204,7 @@ const setupCanvas = () => {
 const initGame = () => {
   const ctx = setupCanvas();
   let game = new Game(ctx);
+
 
   //redraw the game every 20 miliseconds
   setInterval(() => game.draw(), 20);
