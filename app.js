@@ -33,7 +33,7 @@ let character = new MainCharacter();
 
 
 
-
+let blocks = []
 
 
 //Main Game Class
@@ -41,20 +41,20 @@ class Game {
   constructor(ctx) {
     this.ctx = ctx;
     //initialize the array (of arrays) - game board (where the blocks are!)
-    this.blocks = [];
+    
 
     //initialize an array that stores the positions that are not occupied (in the form of objects)
     const emptyPositions = [];
     //Iterates over the vertical blocks and generates that number of arrays (in the "main" array)
     for (let i = 0; i < NUM_BLOCKS_VERTICAL; i++) {
-      this.blocks.push([]);
+      blocks.push([]);
       // Iterates over the horizontal blocks and if both indexes are odd genereate unbreakable blocks
       for (let j = 0; j < NUM_BLOCKS_HORIZONTAL; j++) {
         if (i % 2 !== 0 && j % 2 !== 0) {
-          this.blocks[i].push(new UnbreakableBlock());
+          blocks[i].push(new UnbreakableBlock());
           // "else" push null into the array of blocks
         } else {
-          this.blocks[i].push(null); // fills the array of blocks with null where there are no unbreakable blocks
+          blocks[i].push(null); // fills the array of blocks with null where there are no unbreakable blocks
 
           //To prevent boxing in the player without escape during the first iteration, the positions [0,0], [0,1] and [1,0] can't be ocupied by breakable blocks
           //To do that, this positions will be excluded from the emptyPositions array - the position for the breakable block will be randomly choosed from there.
@@ -75,7 +75,7 @@ class Game {
       // Selects the object in the emptyPositions array on the random index determined
       const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
       //where to generate the breakable block - based on the randomly choosed object
-      this.blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = new BreakableBlock();
+      blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = new BreakableBlock();
       //remove the recent occupied position from the emptyPositions arry to prevent the random "choosing" the same position again
       emptyPositions.splice(emptyPositionIndex, 1);
     }
@@ -88,11 +88,11 @@ class Game {
 
     //draw blocks
     //iterates over the rows in the blocks array of arrays
-    for (let i = 0; i < this.blocks.length; i++) {
+    for (let i = 0; i < blocks.length; i++) {
       //iterates over the columns in that row
-      for (let j = 0; j < this.blocks[i].length; j++) {
+      for (let j = 0; j < blocks[i].length; j++) {
         //block at i, j
-        const block = this.blocks[i][j];
+        const block = blocks[i][j];
         // if the position is not free
         if (block !== null) {
           //draw the block (see class Block)
@@ -100,16 +100,11 @@ class Game {
         }
       }
     }
+  
     character.draw(this.ctx);
+    
   }
 }
-
-
-
-
-
-
-
 
 
 
@@ -154,36 +149,27 @@ document.onkeydown = function(e) {
    
   switch(e.keyCode) {
     case 37: // left
-      if(character.x > 0){
+      if(character.x > 0 && blocks[character.y/BLOCK_SIZE][(character.x/BLOCK_SIZE) - 1] === null){
         character.x -= BLOCK_SIZE;
       }
       break;
-    case 38: //
-      if(character.y > 0){
+    case 38: // up
+      if(character.y > 0 && blocks[(character.y/BLOCK_SIZE) - 1][character.x/BLOCK_SIZE] === null){
         character.y -= BLOCK_SIZE;
       }
       break;
     case 39: // right
-      if (character.x < GAME_CANVAS_WIDTH - BLOCK_SIZE ){
+      if (character.x < GAME_CANVAS_WIDTH - BLOCK_SIZE && blocks[character.y/BLOCK_SIZE][(character.x/BLOCK_SIZE) + 1] === null){
         character.x += BLOCK_SIZE;
       }
       break;
     case 40: // down
-      if (character.y < GAME_CANVAS_HEIGHT - BLOCK_SIZE){
+      if (character.y < GAME_CANVAS_HEIGHT - BLOCK_SIZE && blocks[(character.y/BLOCK_SIZE) +1][character.x/BLOCK_SIZE] === null){
         character.y += BLOCK_SIZE;
       }
       break;	
   }	
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -205,10 +191,17 @@ const initGame = () => {
   const ctx = setupCanvas();
   let game = new Game(ctx);
 
+ 
 
-  //redraw the game every 20 miliseconds
+
+  //redraw the game every 20 milis,econds
   setInterval(() => game.draw(), 20);
 };
 
+
+
 // Wait for document to load before executing
 document.addEventListener("DOMContentLoaded", initGame);
+
+
+
