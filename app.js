@@ -7,6 +7,21 @@ const GAME_CANVAS_HEIGHT = NUM_BLOCKS_VERTICAL * BLOCK_SIZE;
 const BACKGROUND_COLOR = "#EEEEEE";
 const FRACTION_BREAKABLE_BLOCKS = 0.4;
 const CHARACTER_SIZE = 60;
+const ACTIVE_BOMB_SIZE = 60;
+
+
+let bombs = []; 
+
+class Bomb {
+  constructor(x, y) {
+    this.src = "./images/bomb.jpg";
+    this.width = ACTIVE_BOMB_SIZE;
+    this.height = ACTIVE_BOMB_SIZE;
+    this.x = x;
+    this.y = y;
+    
+  }
+}
 
 
 
@@ -33,8 +48,8 @@ let character = new MainCharacter();
 
 
 
-let blocks = []
-
+let blocks = []; 
+let ctx;
 
 //Main Game Class
 class Game {
@@ -101,6 +116,12 @@ class Game {
       }
     }
   
+     
+    bombs.forEach(bomb => {
+      let img = new Image();
+      img.src = bomb.src,
+      ctx.drawImage(img, bomb.x, bomb.y, bomb.width, bomb.height);   
+    });
     character.draw(this.ctx);
     
   }
@@ -112,7 +133,7 @@ class Game {
 //Main class of blocks. Has 1 method - draw()
 class Block {
   constructor(src) {
-    this.img = new Image();
+    this.img = new Image(); 
     this.img.src = src;
     this.width = BLOCK_SIZE;
     this.height = BLOCK_SIZE;
@@ -168,10 +189,31 @@ document.onkeydown = function(e) {
         character.y += BLOCK_SIZE;
       }
       break;	
+    case 32:
+      bombs.push(new Bomb(character.x, character.y));
+
+      
+      for (let i = 0; i<bombs.length; i++) {
+        console.log(blocks[bombs[i].x][bombs[i].y+1]);
+        if(blocks[bombs[i].x][(bombs[i].y)+1] === BreakableBlock){
+          console.log("Funcionou");
+
+        }
+
+
+
+
+
+
+        
+      }
+      
+       
+      //  console.log(bombs[0].x , bombs[0].y)
+      break;
+          
   }	
 }
-
-
 
 
 
@@ -180,7 +222,7 @@ document.onkeydown = function(e) {
 //sets the dimensions of the canvas based on game parameters and return canvas context
 const setupCanvas = () => {
   const canvas = document.getElementById("game");
-  const ctx = canvas.getContext("2d");
+  ctx = canvas.getContext("2d");
   canvas.width = GAME_CANVAS_WIDTH;
   canvas.height = GAME_CANVAS_HEIGHT;
   return ctx;
@@ -196,6 +238,8 @@ const initGame = () => {
 
   //redraw the game every 20 milis,econds
   setInterval(() => game.draw(), 20);
+
+  
 };
 
 
