@@ -9,6 +9,8 @@ const FRACTION_BREAKABLE_BLOCKS = 0.4;
 const CHARACTER_SIZE = 60;
 const ACTIVE_BOMB_SIZE = 60;
 const TIME_TO_EXPLODE = 3000;
+const BUG_SIZE = 60;
+const NUM_BUGS = 10;
 
 class MainCharacter {
   constructor() {
@@ -30,6 +32,40 @@ class MainCharacter {
   }
 }
 
+class Bug {
+  constructor(x, y) {
+    this.img = new Image();
+    this.img.src = "./images/bug.png";
+    this.width = BUG_SIZE;
+    this.height = BUG_SIZE;
+    this.x = x;
+    this.y = y;
+    this.direction = "right";
+  }
+  move() {
+    switch (this.direction) {
+      case "left":
+        this.x -= 1;
+        break;
+      case "right":
+        this.x += 1;
+        break;
+      case "up":
+        this.y -= 1;
+        break;
+      case "down":
+        this.y += 1;
+        break;
+    }
+  }
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+  changeDirection(direction) {
+    this.direction = direction;
+  }
+}
+
 let character = new MainCharacter();
 
 let blocks = [];
@@ -40,6 +76,7 @@ class Game {
   constructor(ctx) {
     this.ctx = ctx;
     this.isGameOver = false;
+    this.bugs = [];
     //initialize the array (of arrays) - game board (where the blocks are!)
 
     //initialize an array that stores the positions that are not occupied (in the form of objects)
@@ -78,6 +115,12 @@ class Game {
       //remove the recent occupied position from the emptyPositions arry to prevent the random "choosing" the same position again
       emptyPositions.splice(emptyPositionIndex, 1);
     }
+    for (let i = 0; i < NUM_BUGS; i++) {
+      const emptyPositionIndex = Math.floor(Math.random() * emptyPositions.length);
+      const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
+      this.bugs.push(new Bug(selectedEmptyPosition.j * BLOCK_SIZE, selectedEmptyPosition.i * BLOCK_SIZE));
+      emptyPositions.splice(emptyPositionIndex, 1);
+    }
   }
 
   draw() {
@@ -100,6 +143,9 @@ class Game {
       }
     }
     character.draw(this.ctx);
+    this.bugs.forEach(bug => {
+      bug.draw(this.ctx);
+    });
   }
   update() {
     let characterIOnGrid = character.y / BLOCK_SIZE;
@@ -129,10 +175,8 @@ class Game {
             blocks[i][j] = blocks[i][j].onExplosion();
           }
           if (
-            i - 1 <= characterIOnGrid &&
-            characterIOnGrid <= i + 1 &&
-            j - 1 <= characterJOnGrid &&
-            characterJOnGrid <= j + 1
+            (characterJOnGrid === j && (i - 1 <= characterIOnGrid && characterIOnGrid <= i + 1)) ||
+            (characterIOnGrid === i && (j - 1 <= characterJOnGrid && characterJOnGrid <= j + 1))
           ) {
             character.die();
             this.isGameOver = true;
@@ -140,6 +184,34 @@ class Game {
         }
       }
     }
+    this.bugs.forEach(bug => {
+      let bugIOnGrid = bug.y / BLOCK_SIZE;
+      let bugJOnGrid = bug.x / BLOCK_SIZE;
+
+      const possibleDirections = [];
+      if (Math.ceil(bugJOnGrid) - 1 >= 0 && blocks[Math.floor(bugIOnGrid)][Math.ceil(bugJOnGrid) - 1] === null) {
+        possibleDirections.push("left");
+      }
+      if (Math.floor(bugJOnGrid) + 1 < NUM_BLOCKS_HORIZONTAL && blocks[Math.floor(bugIOnGrid)][Math.floor(bugJOnGrid) + 1] === null) {
+        possibleDirections.push("right");
+      }
+      if (Math.ceil(bugIOnGrid) - 1 >= 0 && blocks[Math.ceil(bugIOnGrid) - 1][Math.floor(bugJOnGrid)] === null) {
+        possibleDirections.push("up");
+      }
+      if (Math.floor(bugIOnGrid) + 1 < NUM_BLOCKS_VERTICAL && blocks[Math.floor(bugIOnGrid) + 1][Math.floor(bugJOnGrid)] === null) {
+        possibleDirections.push("down");
+      }
+      
+
+      if(possibleDirections.includes(bug.direction)) {
+        bug.move();
+      } else if (possibleDirections.length >0) {
+        const possibleDirectionsIndex = Math.floor(Math.random() * possibleDirections.length);
+        const selectedDirection = possibleDirections[possibleDirectionsIndex];
+        bug.changeDirection(selectedDirection);
+
+      }
+    });
   }
 }
 
