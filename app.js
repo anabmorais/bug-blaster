@@ -8,25 +8,7 @@ const BACKGROUND_COLOR = "#EEEEEE";
 const FRACTION_BREAKABLE_BLOCKS = 0.4;
 const CHARACTER_SIZE = 60;
 const ACTIVE_BOMB_SIZE = 60;
-
-
-let bombs = []; 
-
-class Bomb {
-  constructor(x, y) {
-    this.src = "./images/bomb.jpg";
-    this.width = ACTIVE_BOMB_SIZE;
-    this.height = ACTIVE_BOMB_SIZE;
-    this.x = x;
-    this.y = y;
-    
-  }
-}
-
-
-
-
-
+const TIME_TO_EXPLODE = 3000;
 
 class MainCharacter {
   constructor() {
@@ -36,27 +18,29 @@ class MainCharacter {
     this.height = CHARACTER_SIZE;
     this.x = 0;
     this.y = 0;
-    
+    this.isAlive = true;
   }
   draw(ctx) {
-    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    if (this.isAlive) {
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+  }
+  die() {
+    this.isAlive = false;
   }
 }
 
 let character = new MainCharacter();
 
-
-
-
-let blocks = []; 
+let blocks = [];
 let ctx;
 
 //Main Game Class
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
+    this.isGameOver = false;
     //initialize the array (of arrays) - game board (where the blocks are!)
-    
 
     //initialize an array that stores the positions that are not occupied (in the form of objects)
     const emptyPositions = [];
@@ -115,25 +99,54 @@ class Game {
         }
       }
     }
-  
-     
-    bombs.forEach(bomb => {
-      let img = new Image();
-      img.src = bomb.src,
-      ctx.drawImage(img, bomb.x, bomb.y, bomb.width, bomb.height);   
-    });
     character.draw(this.ctx);
-    
+  }
+  update() {
+    let characterIOnGrid = character.y / BLOCK_SIZE;
+    let characterJOnGrid = character.x / BLOCK_SIZE;
+
+    //iterates over the rows in the blocks array of arrays
+    for (let i = 0; i < blocks.length; i++) {
+      //iterates over the columns in that row
+      for (let j = 0; j < blocks[i].length; j++) {
+        //block at i, j
+        const block = blocks[i][j];
+        // if the position is a bomb
+        if (block instanceof Bomb && block.shouldExplode()) {
+          if (j + 1 < NUM_BLOCKS_HORIZONTAL && blocks[i][j + 1] !== null) {
+            blocks[i][j + 1] = blocks[i][j + 1].onExplosion();
+          }
+          if (j - 1 >= 0 && blocks[i][j - 1] !== null) {
+            blocks[i][j - 1] = blocks[i][j - 1].onExplosion();
+          }
+          if (i + 1 < NUM_BLOCKS_VERTICAL && blocks[i + 1][j] !== null) {
+            blocks[i + 1][j] = blocks[i + 1][j].onExplosion();
+          }
+          if (i - 1 >= 0 && blocks[i - 1][j] !== null) {
+            blocks[i - 1][j] = blocks[i - 1][j].onExplosion();
+          }
+          if (blocks[i][j] !== null) {
+            blocks[i][j] = blocks[i][j].onExplosion();
+          }
+          if (
+            i - 1 <= characterIOnGrid &&
+            characterIOnGrid <= i + 1 &&
+            j - 1 <= characterJOnGrid &&
+            characterJOnGrid <= j + 1
+          ) {
+            character.die();
+            this.isGameOver = true;
+          }
+        }
+      }
+    }
   }
 }
-
-
-
 
 //Main class of blocks. Has 1 method - draw()
 class Block {
   constructor(src) {
-    this.img = new Image(); 
+    this.img = new Image();
     this.img.src = src;
     this.width = BLOCK_SIZE;
     this.height = BLOCK_SIZE;
@@ -142,12 +155,36 @@ class Block {
   draw(ctx, x, y) {
     ctx.drawImage(this.img, x, y, this.width, this.height);
   }
+  onExplosion() {
+    return this;
+  }
+}
+
+class Bomb extends Block {
+  constructor(x, y) {
+    super("./images/bomb.jpg");
+    this.x = x;
+    this.y = y;
+    this.isTimerFinished = false;
+    setTimeout(() => {
+      this.isTimerFinished = true;
+    }, TIME_TO_EXPLODE);
+  }
+  onExplosion() {
+    return null;
+  }
+  shouldExplode() {
+    return this.isTimerFinished;
+  }
 }
 
 //extends the class block - the breakable block has an image source
 class BreakableBlock extends Block {
   constructor() {
     super("./images/tile_rock_brown@3x.png");
+  }
+  onExplosion() {
+    return null;
   }
 }
 
@@ -158,66 +195,42 @@ class UnbreakableBlock extends Block {
   }
 }
 
-
-
-
-
-
-
-
 document.onkeydown = function(e) {
-  
-   
-  switch(e.keyCode) {
+  switch (e.keyCode) {
     case 37: // left
-      if(character.x > 0 && blocks[character.y/BLOCK_SIZE][(character.x/BLOCK_SIZE) - 1] === null){
+      if (character.x > 0 && blocks[character.y / BLOCK_SIZE][character.x / BLOCK_SIZE - 1] === null) {
         character.x -= BLOCK_SIZE;
       }
       break;
     case 38: // up
-      if(character.y > 0 && blocks[(character.y/BLOCK_SIZE) - 1][character.x/BLOCK_SIZE] === null){
+      if (character.y > 0 && blocks[character.y / BLOCK_SIZE - 1][character.x / BLOCK_SIZE] === null) {
         character.y -= BLOCK_SIZE;
       }
       break;
     case 39: // right
-      if (character.x < GAME_CANVAS_WIDTH - BLOCK_SIZE && blocks[character.y/BLOCK_SIZE][(character.x/BLOCK_SIZE) + 1] === null){
+      if (
+        character.x < GAME_CANVAS_WIDTH - BLOCK_SIZE &&
+        blocks[character.y / BLOCK_SIZE][character.x / BLOCK_SIZE + 1] === null
+      ) {
         character.x += BLOCK_SIZE;
       }
       break;
     case 40: // down
-      if (character.y < GAME_CANVAS_HEIGHT - BLOCK_SIZE && blocks[(character.y/BLOCK_SIZE) +1][character.x/BLOCK_SIZE] === null){
+      if (
+        character.y < GAME_CANVAS_HEIGHT - BLOCK_SIZE &&
+        blocks[character.y / BLOCK_SIZE + 1][character.x / BLOCK_SIZE] === null
+      ) {
         character.y += BLOCK_SIZE;
       }
-      break;	
-    case 32:
-      bombs.push(new Bomb(character.x, character.y));
-
-      
-      for (let i = 0; i<bombs.length; i++) {
-        console.log(blocks[bombs[i].x][bombs[i].y+1]);
-        if(blocks[bombs[i].x][(bombs[i].y)+1] === BreakableBlock){
-          console.log("Funcionou");
-
-        }
-
-
-
-
-
-
-        
-      }
-      
-       
-      //  console.log(bombs[0].x , bombs[0].y)
       break;
-          
-  }	
-}
-
-
-
-
+    case 32:
+      const bomb = new Bomb(character.x, character.y);
+      let i = character.y / BLOCK_SIZE;
+      let j = character.x / BLOCK_SIZE;
+      blocks[i][j] = bomb;
+      break;
+  }
+};
 
 //sets the dimensions of the canvas based on game parameters and return canvas context
 const setupCanvas = () => {
@@ -233,19 +246,12 @@ const initGame = () => {
   const ctx = setupCanvas();
   let game = new Game(ctx);
 
- 
-
-
-  //redraw the game every 20 milis,econds
-  setInterval(() => game.draw(), 20);
-
-  
+  //redraw the game every 20 miliseconds
+  setInterval(() => {
+    game.update();
+    game.draw();
+  }, 20);
 };
-
-
 
 // Wait for document to load before executing
 document.addEventListener("DOMContentLoaded", initGame);
-
-
-
