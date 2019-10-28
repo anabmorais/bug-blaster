@@ -36,8 +36,12 @@ class Game {
       const emptyPositionIndex = Math.floor(Math.random() * emptyPositions.length);
       // Selects the object in the emptyPositions array on the random index determined
       const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
+      const breakableBlock = new BreakableBlock();
+      if(i === 0) {
+        breakableBlock.setHiddenBlock(new ExitBlock());
+      }
       //where to generate the breakable block - based on the randomly choosed object
-      blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = new BreakableBlock();
+      blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = breakableBlock;
       //remove the recent occupied position from the emptyPositions arry to prevent the random "choosing" the same position again
       emptyPositions.splice(emptyPositionIndex, 1);
     }

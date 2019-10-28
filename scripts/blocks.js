@@ -12,15 +12,22 @@ class Block {
     onExplosion() {
       return this;
     }
+    isSolid() {
+      return true;
+    }
   }
 
   //extends the class block - the breakable block has an image source
 class BreakableBlock extends Block {
     constructor() {
       super("./images/tile_rock_brown@3x.png");
+      this.hiddenBlock = null;
     }
     onExplosion() {
-      return null;
+      return this.hiddenBlock;
+    }
+    setHiddenBlock(block) {
+      this.hiddenBlock = block;
     }
   }
   
@@ -28,6 +35,15 @@ class BreakableBlock extends Block {
   class UnbreakableBlock extends Block {
     constructor() {
       super("./images/tile_wall5@3x.png");
+    }
+  }
+
+  class ExitBlock extends Block {
+    constructor() {
+      super("./images/git.png");
+    }
+    isSolid() {
+      return false;
     }
   }
 
@@ -42,7 +58,8 @@ class BreakableBlock extends Block {
       }, TIME_TO_EXPLODE);
     }
     onExplosion() {
-      return null;
+      this.isTimerFinished = true;
+      return this;
     }
     shouldExplode() {
       return this.isTimerFinished;
