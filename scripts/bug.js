@@ -9,6 +9,7 @@ class Bug {
       this.direction = "right";
     }
     move() {
+      // moving 1 pixel
       switch (this.direction) {
         case "left":
           this.x -= 1;

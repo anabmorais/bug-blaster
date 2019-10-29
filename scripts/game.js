@@ -2,6 +2,7 @@ class Game {
   constructor(ctx) {
     this.ctx = ctx;
     this.isGameOver = false;
+    this.wonGame = false;
     this.bugs = [];
     //initialize the array (of arrays) - game board (where the blocks are!)
 
@@ -37,7 +38,7 @@ class Game {
       // Selects the object in the emptyPositions array on the random index determined
       const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
       const breakableBlock = new BreakableBlock();
-      if(i === 0) {
+      if (i === 0) {
         breakableBlock.setHiddenBlock(new ExitBlock());
       }
       //where to generate the breakable block - based on the randomly choosed object
@@ -45,6 +46,7 @@ class Game {
       //remove the recent occupied position from the emptyPositions arry to prevent the random "choosing" the same position again
       emptyPositions.splice(emptyPositionIndex, 1);
     }
+    // Bugs created based on the empty spaces array AFTER the breakableBlocks are created
     for (let i = 0; i < NUM_BUGS; i++) {
       const emptyPositionIndex = Math.floor(Math.random() * emptyPositions.length);
       const selectedEmptyPosition = emptyPositions[emptyPositionIndex];
@@ -114,7 +116,7 @@ class Game {
       }
     });
   }
-
+  //To see witch blocks explodes
   explodeBombs() {
     let characterIOnGrid = character.y / BLOCK_SIZE;
     let characterJOnGrid = character.x / BLOCK_SIZE;
@@ -213,7 +215,7 @@ class Game {
           bug.x + 10,
           bug.x + BLOCK_SIZE - 10,
           bug.y + 10,
-          bug.y + BLOCK_SIZE - 10 
+          bug.y + BLOCK_SIZE - 10
         )
       ) {
         character.die();
@@ -222,9 +224,52 @@ class Game {
     });
   }
 
+  handleKeyPress(keyCode) {
+    if (this.isGameOver === false && this.wonGame === false) {
+      let i = character.y / BLOCK_SIZE;
+      let j = character.x / BLOCK_SIZE;
+      switch (keyCode) {
+        case 37: // left
+          if (character.x > 0 && (blocks[i][j - 1] === null || blocks[i][j - 1].isSolid() === false)) {
+            character.x -= BLOCK_SIZE;
+          }
+          break;
+        case 38: // up
+          if (character.y > 0 && (blocks[i - 1][j] === null || blocks[i - 1][j].isSolid() === false)) {
+            character.y -= BLOCK_SIZE;
+          }
+          break;
+        case 39: // right
+          if (j + 1 < NUM_BLOCKS_HORIZONTAL && (blocks[i][j + 1] === null || blocks[i][j + 1].isSolid() === false)) {
+            character.x += BLOCK_SIZE;
+          }
+          break;
+        case 40: // down
+          if (i + 1 < NUM_BLOCKS_VERTICAL && (blocks[i + 1][j] === null || blocks[i + 1][j].isSolid() === false)) {
+            character.y += BLOCK_SIZE;
+          }
+          break;
+        case 32:
+          const bomb = new Bomb(character.x, character.y);
+          blocks[i][j] = bomb;
+          break;
+      }
+    } 
+  }
+
   update() {
     this.explodeBombs();
     this.moveBugs();
     this.checkIfCharacterCaught();
+  }
+
+  checkWin() {
+    let i = character.y / BLOCK_SIZE;
+    let j = character.x / BLOCK_SIZE;
+    if (blocks[i][j] instanceof ExitBlock && this.bugs.length === 0) {
+      this.wonGame = true;
+      return;
+    }
+    //verificar que i,j do personagem é o bloco "não sólido"  ou seja instance of exit block e já nao há bug
   }
 }

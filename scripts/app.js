@@ -16,11 +16,15 @@ const setupCanvas = () => {
 const initGame = () => {
   const ctx = setupCanvas();
   let game = new Game(ctx);
+  document.onkeydown = function(e) {
+    game.handleKeyPress(e.keyCode)
+  };
 
   //redraw the game every 20 miliseconds
   setInterval(() => {
     game.update();
     game.draw();
+    game.checkWin();
   }, 20);
 };
 
