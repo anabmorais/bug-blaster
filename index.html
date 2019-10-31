@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-
-    <div class="container">
-      
-        <h2>Let's clean our code!!</h2>
-      
-      <div id="game-div"><canvas id="game"></canvas></div>
-      <div><a class="back-button" href="./rules-start.html">Try Again</a></div>
+    <div id="instructions">
+      <h1>Bug Blaster</h1>
+      <img src="./images/amy_intro.png">
+      <button id ="start-button">START</button>
+    </div>
+    <div id="main-game" style="display: none;">
+      <canvas id="game"></canvas>
+      <button id="try-again">Try again</button>
     </div>
 
     <script src="./scripts/utils.js"></script>

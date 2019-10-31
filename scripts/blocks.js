@@ -34,7 +34,7 @@ class BreakableBlock extends Block {
   //extends the class block - the unbreakable block has an image source
   class UnbreakableBlock extends Block {
     constructor() {
-      super("./images/tile_wall5@3x.png");
+      super("./images/tile_wall@3x.png");
     }
   }
 
@@ -50,6 +50,7 @@ class BreakableBlock extends Block {
   class Bomb extends Block {
     constructor(x, y) {
       super("./images/bomb.jpg");
+      this.hiddenBlock = null;
       this.x = x;
       this.y = y;
       this.isTimerFinished = false;
@@ -59,9 +60,18 @@ class BreakableBlock extends Block {
     }
     onExplosion() {
       this.isTimerFinished = true;
-      return this;
+      return this.hiddenBlock;
     }
     shouldExplode() {
       return this.isTimerFinished;
+    }
+    setHiddenBlock(block) {
+      this.hiddenBlock = block;
+    }
+    draw(ctx, x, y) {
+      if(this.hiddenBlock !== null){
+        this.hiddenBlock.draw(ctx, x, y);
+      }
+      super.draw(ctx, x, y);
     }
   }

@@ -1,25 +1,29 @@
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
+    this.character = new MainCharacter();
     this.isGameOver = false;
     this.wonGame = false;
     this.bugs = [];
-    //initialize the array (of arrays) - game board (where the blocks are!)
+    this.blocks = [];
+    this.deadCharacter = new Image();
+    this.deadCharacter.src = "./images/amy_dead.png";
+    //initialize the array (of arrays) - game board (where the this.blocks are!)
 
     //initialize an array that stores the positions that are not occupied (in the form of objects)
     const emptyPositions = [];
-    //Iterates over the vertical blocks and generates that number of arrays (in the "main" array)
+    //Iterates over the vertical this.blocks and generates that number of arrays (in the "main" array)
     for (let i = 0; i < NUM_BLOCKS_VERTICAL; i++) {
-      blocks.push([]);
-      // Iterates over the horizontal blocks and if both indexes are odd genereate unbreakable blocks
+      this.blocks.push([]);
+      // Iterates over the horizontal this.blocks and if both indexes are odd genereate unbreakable this.blocks
       for (let j = 0; j < NUM_BLOCKS_HORIZONTAL; j++) {
         if (i % 2 !== 0 && j % 2 !== 0) {
-          blocks[i].push(new UnbreakableBlock());
-          // "else" push null into the array of blocks
+          this.blocks[i].push(new UnbreakableBlock());
+          // "else" push null into the array of this.blocks
         } else {
-          blocks[i].push(null); // fills the array of blocks with null where there are no unbreakable blocks
+          this.blocks[i].push(null); // fills the array of this.blocks with null where there are no unbreakable this.blocks
 
-          //To prevent boxing in the player without escape during the first iteration, the positions [0,0], [0,1] and [1,0] can't be ocupied by breakable blocks
+          //To prevent boxing in the player without escape during the first iteration, the positions [0,0], [0,1] and [1,0] can't be ocupied by breakable this.blocks
           //To do that, this positions will be excluded from the emptyPositions array - the position for the breakable block will be randomly choosed from there.
           if (i > 1 || j > 1) {
             //stores the empty position in the emptyPositions array
@@ -29,7 +33,7 @@ class Game {
       }
     }
 
-    //Determine how many breakable blocks are generated, based on the percentage of ocupation of empty spaces.
+    //Determine how many breakable this.blocks are generated, based on the percentage of ocupation of empty spaces.
     const numBreakableBlock = Math.floor(FRACTION_BREAKABLE_BLOCKS * emptyPositions.length);
     //iterates over each breakable block
     for (let i = 0; i < numBreakableBlock; i++) {
@@ -42,7 +46,7 @@ class Game {
         breakableBlock.setHiddenBlock(new ExitBlock());
       }
       //where to generate the breakable block - based on the randomly choosed object
-      blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = breakableBlock;
+      this.blocks[selectedEmptyPosition.i][selectedEmptyPosition.j] = breakableBlock;
       //remove the recent occupied position from the emptyPositions arry to prevent the random "choosing" the same position again
       emptyPositions.splice(emptyPositionIndex, 1);
     }
@@ -60,13 +64,13 @@ class Game {
     this.ctx.fillStyle = BACKGROUND_COLOR;
     this.ctx.fillRect(0, 0, GAME_CANVAS_WIDTH, GAME_CANVAS_HEIGHT);
 
-    //draw blocks
-    //iterates over the rows in the blocks array of arrays
-    for (let i = 0; i < blocks.length; i++) {
+    //draw this.blocks
+    //iterates over the rows in the this.blocks array of arrays
+    for (let i = 0; i < this.blocks.length; i++) {
       //iterates over the columns in that row
-      for (let j = 0; j < blocks[i].length; j++) {
+      for (let j = 0; j < this.blocks[i].length; j++) {
         //block at i, j
-        const block = blocks[i][j];
+        const block = this.blocks[i][j];
         // if the position is not free
         if (block !== null) {
           //draw the block (see class Block)
@@ -75,11 +79,34 @@ class Game {
       }
     }
 
-    character.draw(this.ctx);
+    this.character.draw(this.ctx);
 
     this.bugs.forEach(bug => {
       bug.draw(this.ctx);
     });
+    if (this.isGameOver === true) {
+      this.drawLoseScreen();
+    }
+  }
+
+  drawLoseScreen() {
+    ctx.fillStyle = "#f06067";
+    ctx.fillRect(
+      2.2 * BLOCK_SIZE,
+      2.2 * BLOCK_SIZE,
+      GAME_CANVAS_WIDTH - 4.4 * BLOCK_SIZE,
+      GAME_CANVAS_HEIGHT - 4.4 * BLOCK_SIZE
+    );
+    ctx.drawImage(this.deadCharacter, 150, 200, 450, 450);
+    ctx.fillStyle = "#620200";
+    ctx.font = "60px Verdana";
+    ctx.fillText("Game Over", 250, 300);
+    ctx.font = "30px Verdana";
+    ctx.fillText("Amy couldn't debug", 650, 350);
+    ctx.fillText("her code and escape", 650, 400);
+    ctx.fillText("the bombs ...", 650, 450);
+    ctx.fillText("Let's drink a coffee", 650, 530);
+    ctx.fillText("and try again!", 650, 580);
   }
 
   moveBugs() {
@@ -88,21 +115,21 @@ class Game {
       let bugJOnGrid = bug.x / BLOCK_SIZE;
 
       const possibleDirections = [];
-      if (Math.ceil(bugJOnGrid) - 1 >= 0 && blocks[Math.floor(bugIOnGrid)][Math.ceil(bugJOnGrid) - 1] === null) {
+      if (Math.ceil(bugJOnGrid) - 1 >= 0 && this.blocks[Math.floor(bugIOnGrid)][Math.ceil(bugJOnGrid) - 1] === null) {
         possibleDirections.push("left");
       }
       if (
         Math.floor(bugJOnGrid) + 1 < NUM_BLOCKS_HORIZONTAL &&
-        blocks[Math.floor(bugIOnGrid)][Math.floor(bugJOnGrid) + 1] === null
+        this.blocks[Math.floor(bugIOnGrid)][Math.floor(bugJOnGrid) + 1] === null
       ) {
         possibleDirections.push("right");
       }
-      if (Math.ceil(bugIOnGrid) - 1 >= 0 && blocks[Math.ceil(bugIOnGrid) - 1][Math.floor(bugJOnGrid)] === null) {
+      if (Math.ceil(bugIOnGrid) - 1 >= 0 && this.blocks[Math.ceil(bugIOnGrid) - 1][Math.floor(bugJOnGrid)] === null) {
         possibleDirections.push("up");
       }
       if (
         Math.floor(bugIOnGrid) + 1 < NUM_BLOCKS_VERTICAL &&
-        blocks[Math.floor(bugIOnGrid) + 1][Math.floor(bugJOnGrid)] === null
+        this.blocks[Math.floor(bugIOnGrid) + 1][Math.floor(bugJOnGrid)] === null
       ) {
         possibleDirections.push("down");
       }
@@ -116,41 +143,41 @@ class Game {
       }
     });
   }
-  //To see witch blocks explodes
+  //To see witch this.blocks explodes
   explodeBombs() {
-    let characterIOnGrid = character.y / BLOCK_SIZE;
-    let characterJOnGrid = character.x / BLOCK_SIZE;
+    let characterIOnGrid = this.character.y / BLOCK_SIZE;
+    let characterJOnGrid = this.character.x / BLOCK_SIZE;
 
-    //iterates over the rows in the blocks array of arrays
-    for (let i = 0; i < blocks.length; i++) {
+    //iterates over the rows in the this.blocks array of arrays
+    for (let i = 0; i < this.blocks.length; i++) {
       //iterates over the columns in that row
-      for (let j = 0; j < blocks[i].length; j++) {
+      for (let j = 0; j < this.blocks[i].length; j++) {
         //block at i, j
-        const block = blocks[i][j];
+        const block = this.blocks[i][j];
         // if the position is a bomb
         if (block instanceof Bomb && block.shouldExplode()) {
-          // Destroy neighbour blocks
-          if (j + 1 < NUM_BLOCKS_HORIZONTAL && blocks[i][j + 1] !== null) {
-            blocks[i][j + 1] = blocks[i][j + 1].onExplosion();
+          // Destroy neighbour this.blocks
+          if (j + 1 < NUM_BLOCKS_HORIZONTAL && this.blocks[i][j + 1] !== null) {
+            this.blocks[i][j + 1] = this.blocks[i][j + 1].onExplosion();
           }
-          if (j - 1 >= 0 && blocks[i][j - 1] !== null) {
-            blocks[i][j - 1] = blocks[i][j - 1].onExplosion();
+          if (j - 1 >= 0 && this.blocks[i][j - 1] !== null) {
+            this.blocks[i][j - 1] = this.blocks[i][j - 1].onExplosion();
           }
-          if (i + 1 < NUM_BLOCKS_VERTICAL && blocks[i + 1][j] !== null) {
-            blocks[i + 1][j] = blocks[i + 1][j].onExplosion();
+          if (i + 1 < NUM_BLOCKS_VERTICAL && this.blocks[i + 1][j] !== null) {
+            this.blocks[i + 1][j] = this.blocks[i + 1][j].onExplosion();
           }
-          if (i - 1 >= 0 && blocks[i - 1][j] !== null) {
-            blocks[i - 1][j] = blocks[i - 1][j].onExplosion();
+          if (i - 1 >= 0 && this.blocks[i - 1][j] !== null) {
+            this.blocks[i - 1][j] = this.blocks[i - 1][j].onExplosion();
           }
           // Destroy bomb
-          blocks[i][j] = null;
+          this.blocks[i][j] = this.blocks[i][j].onExplosion();
 
           // Check if character is caught in explosion
           if (
             (characterJOnGrid === j && (i - 1 <= characterIOnGrid && characterIOnGrid <= i + 1)) ||
             (characterIOnGrid === i && (j - 1 <= characterJOnGrid && characterJOnGrid <= j + 1))
           ) {
-            character.die();
+            this.character.die();
             this.isGameOver = true;
           }
           // Retuns a array whith the bugs that will survive
@@ -208,17 +235,17 @@ class Game {
     this.bugs.forEach(bug => {
       if (
         rectIntersect(
-          character.x,
-          character.x + BLOCK_SIZE,
-          character.y,
-          character.y + BLOCK_SIZE,
+          this.character.x,
+          this.character.x + BLOCK_SIZE,
+          this.character.y,
+          this.character.y + BLOCK_SIZE,
           bug.x + 10,
           bug.x + BLOCK_SIZE - 10,
           bug.y + 10,
           bug.y + BLOCK_SIZE - 10
         )
       ) {
-        character.die();
+        this.character.die();
         this.isGameOver = true;
       }
     });
@@ -226,35 +253,42 @@ class Game {
 
   handleKeyPress(keyCode) {
     if (this.isGameOver === false && this.wonGame === false) {
-      let i = character.y / BLOCK_SIZE;
-      let j = character.x / BLOCK_SIZE;
+      let i = this.character.y / BLOCK_SIZE;
+      let j = this.character.x / BLOCK_SIZE;
       switch (keyCode) {
         case 37: // left
-          if (character.x > 0 && (blocks[i][j - 1] === null || blocks[i][j - 1].isSolid() === false)) {
-            character.x -= BLOCK_SIZE;
+          if (this.character.x > 0 && (this.blocks[i][j - 1] === null || this.blocks[i][j - 1].isSolid() === false)) {
+            this.character.x -= BLOCK_SIZE;
           }
           break;
         case 38: // up
-          if (character.y > 0 && (blocks[i - 1][j] === null || blocks[i - 1][j].isSolid() === false)) {
-            character.y -= BLOCK_SIZE;
+          if (this.character.y > 0 && (this.blocks[i - 1][j] === null || this.blocks[i - 1][j].isSolid() === false)) {
+            this.character.y -= BLOCK_SIZE;
           }
           break;
         case 39: // right
-          if (j + 1 < NUM_BLOCKS_HORIZONTAL && (blocks[i][j + 1] === null || blocks[i][j + 1].isSolid() === false)) {
-            character.x += BLOCK_SIZE;
+          if (
+            j + 1 < NUM_BLOCKS_HORIZONTAL &&
+            (this.blocks[i][j + 1] === null || this.blocks[i][j + 1].isSolid() === false)
+          ) {
+            this.character.x += BLOCK_SIZE;
           }
           break;
         case 40: // down
-          if (i + 1 < NUM_BLOCKS_VERTICAL && (blocks[i + 1][j] === null || blocks[i + 1][j].isSolid() === false)) {
-            character.y += BLOCK_SIZE;
+          if (
+            i + 1 < NUM_BLOCKS_VERTICAL &&
+            (this.blocks[i + 1][j] === null || this.blocks[i + 1][j].isSolid() === false)
+          ) {
+            this.character.y += BLOCK_SIZE;
           }
           break;
         case 32:
-          const bomb = new Bomb(character.x, character.y);
-          blocks[i][j] = bomb;
+          const bomb = new Bomb(this.character.x, this.character.y);
+          bomb.setHiddenBlock(this.blocks[i][j]);
+          this.blocks[i][j] = bomb;
           break;
       }
-    } 
+    }
   }
 
   update() {
@@ -264,9 +298,9 @@ class Game {
   }
 
   checkWin() {
-    let i = character.y / BLOCK_SIZE;
-    let j = character.x / BLOCK_SIZE;
-    if (blocks[i][j] instanceof ExitBlock && this.bugs.length === 0) {
+    let i = this.character.y / BLOCK_SIZE;
+    let j = this.character.x / BLOCK_SIZE;
+    if (this.blocks[i][j] instanceof ExitBlock && this.bugs.length === 0) {
       this.wonGame = true;
       return;
     }

@@ -1,7 +1,7 @@
 class MainCharacter {
     constructor() {
       this.img = new Image();
-      this.img.src = "./images/character.jpg";
+      this.img.src = "./images/amy_game.png";
       this.width = CHARACTER_SIZE;
       this.height = CHARACTER_SIZE;
       this.x = 0;
