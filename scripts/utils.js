@@ -1,3 +1,4 @@
+//Checks if two rectangles colide
 const rectIntersect = (
     minAx, maxAx, minAy, maxAy,
     minBx, maxBx, minBy, maxBy

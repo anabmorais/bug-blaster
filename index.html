@@ -5,20 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Bug Blaster</title>
+    <link href="https://fonts.googleapis.com/css?family=Mali:300,400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div id="instructions">
-      <h1>Bug Blaster</h1>
-      <img src="./images/amy_intro.png">
-      <button id ="start-button">START</button>
-    </div>
-    <div id="main-game" style="display: none;">
-      <canvas id="game"></canvas>
-      <button id="try-again">Try again</button>
-    </div>
+      <div id="title">
+          <h1><span class="green">BUG</span> BLASTER</h1>
+      </div>
+
+      <div id="instructions">
+        <div class="image-container">
+          <img src="./images/amy_intro.png" />
+        </div>
+
+        <div>
+          <h2>Hi! I'm Amy!</h2>
+          <p>
+            I recently started a new adventure - learn how to code.
+          </p>
+          <p>
+            My code has some bugs I need to fix before commiting it to Git.
+          </p>
+          <p>
+            Will you help me?
+          </p>
+          <div id="start-button-container">
+              <button id="start-button">START</button>
+          </div>
+        </div>
+
+        <div>
+          <h2>
+            Instructions
+          </h2>
+          <div>
+            <div class="instructions-item">
+              <img src="./images/bug.png" alt="bug" />
+              <p>Bugs are green, ugly, and always on the move. Be careful and don't let them catch me.</p>
+            </div>
+            <div class="instructions-item">
+              <img src="./images/bomb.png" alt="bomb" />
+              <p>Bombs kill bugs and break walls so I can move. Explosions are dangerous, make sure I'm safe.</p>
+            </div>
+            <div class="instructions-item">
+              <img src="./images/git.png" alt="git-logo" />
+              <p>Once the code is free of bugs, I can finally commit it. Git will be hidden behind a wall.</p>
+            </div>
+            <div class="instructions-item">
+                <p>
+                    Use the <b>arrow keys</b> to move me, and the <b>spacebar</b> to plant a bomb.
+                  </p>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+
+      <div id="main-game" style="display: none;">
+          <button id="try-again">TRY AGAIN</button>
+          <canvas id="game"></canvas>
+        </div>
 
     <script src="./scripts/utils.js"></script>
+    <script src="./scripts/sounds.js"></script>
     <script src="./scripts/game.js"></script>
     <script src="./scripts/blocks.js"></script>
     <script src="./scripts/constants.js"></script>
