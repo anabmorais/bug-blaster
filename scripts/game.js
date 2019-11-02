@@ -1,7 +1,3 @@
-let seconds = document.getElementById("seconds");
-let minutes = document.getElementById("minutes")
-
-
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
@@ -363,6 +359,8 @@ class Game {
       this.checkWin();
       if(this.timeRemaining > 0) {
         this.timeRemaining -= 20;
+        let seconds = document.getElementById("seconds");
+        let minutes = document.getElementById("minutes")    
         seconds.innerHTML = Math.floor((this.timeRemaining / 1000) % 60);
         minutes.innerHTML = Math.floor((this.timeRemaining/ 1000 / 60) % 60);
         
