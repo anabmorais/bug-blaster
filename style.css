@@ -118,3 +118,58 @@ button:hover {
   padding: 60px 0;
   text-align: center;
 }
+
+#clockdiv h1{
+  color:  #4d9912;
+  font-weight: 100;
+  font-size: 40px;
+  margin: 40px 0px 20px;
+}
+
+#clockdiv{
+	
+	color: #fff;
+	display: inline-block;
+	font-weight: 100;
+	text-align: center;
+	font-size: 50px;
+  text-align: center;
+	background: none;
+
+}
+
+#clockdiv > div{
+  font-family: "Mali", cursive;
+	padding: 10px;
+	border-radius: 3px;
+	background: #4d9912;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+}
+
+#clockdiv div > span{
+
+	border-radius: 3px;
+	background: #4d9912;
+	display: inline-block;
+}
+
+.smalltext{
+  padding-top: 5px;
+  font-size: 16px;
+  font-family: "Mali", cursive;
+  font-weight: bold;
+}
+
+#extraGame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#clockdiv h1 {
+  font-family: "Mali", cursive;
+  font-weight: bold;
+}
+

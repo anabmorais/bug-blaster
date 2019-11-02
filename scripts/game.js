@@ -1,3 +1,7 @@
+let seconds = document.getElementById("seconds");
+let minutes = document.getElementById("minutes")
+
+
 class Game {
   constructor(ctx) {
     this.ctx = ctx;
@@ -12,6 +16,9 @@ class Game {
     this.deadCharacter.src = "./images/amy_dead.png";
     this.winCharacter = new Image();
     this.winCharacter.src = "./images/amy_win.png";
+    this.timeRemaining = TIME_TO_PLAY;
+    this.isGameTimeEnded = false;
+    
     //Start playing the background music every time a new game is generated
     playSong();
 
@@ -278,7 +285,12 @@ class Game {
     }
   }
 
-  //
+  timeEnded() {
+    this.timeEnded = true;
+    this.character.die();
+    this.setGameOver();
+  }
+
   checkIfCharacterCaught() {
     this.bugs.forEach(bug => {
       if (
@@ -341,13 +353,24 @@ class Game {
     }
   }
 
+
   //"Moves" the game
   update() {
     this.explodeBombs();
     this.moveBugs();
-    if (!(this.isGameWon || this.isGameOver)) {
+    if (!(this.isGameWon || this.isGameOver || this.isGameTimeEnded)) {
       this.checkIfCharacterCaught();
       this.checkWin();
+      if(this.timeRemaining > 0) {
+        this.timeRemaining -= 20;
+        seconds.innerHTML = Math.floor((this.timeRemaining / 1000) % 60);
+        minutes.innerHTML = Math.floor((this.timeRemaining/ 1000 / 60) % 60);
+        
+   
+        console.log(minutes, seconds)
+      } else  {
+        this.timeEnded();
+      }
     }
   }
 
