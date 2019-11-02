@@ -110,16 +110,16 @@ class Game {
       GAME_CANVAS_WIDTH - 4.4 * BLOCK_SIZE,
       GAME_CANVAS_HEIGHT - 4.4 * BLOCK_SIZE
     );
-    ctx.drawImage(this.deadCharacter, 150, 200, 450, 450);
+    ctx.drawImage(this.deadCharacter, BLOCK_SIZE * 2, BLOCK_SIZE * 2, BLOCK_SIZE * 6, BLOCK_SIZE * 6);
     ctx.fillStyle = "#620200";
     ctx.font = "60px Verdana";
-    ctx.fillText("Game Over", 250, 300);
+    ctx.fillText("Game Over", 5 * BLOCK_SIZE, 3.5 * BLOCK_SIZE);
     ctx.font = "30px Verdana";
-    ctx.fillText("Amy couldn't debug", 650, 350);
-    ctx.fillText("her code and escape", 650, 400);
-    ctx.fillText("the bombs ...", 650, 450);
-    ctx.fillText("Let's drink a coffee", 650, 530);
-    ctx.fillText("and try again!", 650, 580);
+    ctx.fillText("Amy couldn't debug", BLOCK_SIZE * 8, 350);
+    ctx.fillText("her code and escape", BLOCK_SIZE * 8, 400);
+    ctx.fillText("the bombs ...", BLOCK_SIZE * 8, 450);
+    ctx.fillText("Have a cup of coffee", BLOCK_SIZE * 8, 530);
+    ctx.fillText("and try again!", BLOCK_SIZE * 8, 580);
   }
 
   // what appears in the canvas after Game Win
@@ -131,17 +131,16 @@ class Game {
       GAME_CANVAS_WIDTH - 4.4 * BLOCK_SIZE,
       GAME_CANVAS_HEIGHT - 4.4 * BLOCK_SIZE
     );
-    ctx.drawImage(this.winCharacter, 200, 200, 450, 450);
+    ctx.drawImage(this.winCharacter, BLOCK_SIZE * 3, BLOCK_SIZE * 2.5, BLOCK_SIZE * 6, BLOCK_SIZE * 6);
     ctx.fillStyle = "#620200";
     ctx.font = "60px Verdana";
-    ctx.fillText("Win", 350, 300);
+    ctx.fillText("YOU WIN", 5 * BLOCK_SIZE, 3.5 * BLOCK_SIZE);
     ctx.font = "30px Verdana";
-    ctx.fillText("Amy's code don't", 650, 350);
-    ctx.fillText("have more bugs", 650, 400);
-    ctx.fillText("and it's git commited", 650, 450);
-    ctx.fillText("Thank you", 650, 530);
-    ctx.fillText("Do you want to", 650, 580);
-    ctx.fillText("try again?", 650, 630);
+    ctx.fillText("Amy's code is", BLOCK_SIZE * 8, 350);
+    ctx.fillText("free of bugs", BLOCK_SIZE * 8, 400);
+    ctx.fillText("and safely commited", BLOCK_SIZE * 8, 450);
+    ctx.fillText("to Git!", BLOCK_SIZE * 8, 500);
+    
   }
 
   moveBugs() {
