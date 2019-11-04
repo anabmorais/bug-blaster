@@ -11,4 +11,4 @@ const TIME_TO_EXPLODE = 3000;
 const BUG_SIZE = 70;
 const NUM_BUGS = 3;
 const EXPLOSION_DURATION = 300;
-const TIME_TO_PLAY = 0.5 * 60000; // minutes in miliseconds
+const TIME_TO_PLAY = 2 * 60000; // minutes in miliseconds

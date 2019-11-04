@@ -119,12 +119,12 @@ class Game {
     );
     ctx.drawImage(this.deadCharacter, BLOCK_SIZE * 2, BLOCK_SIZE * 2, BLOCK_SIZE * 6, BLOCK_SIZE * 6);
     ctx.fillStyle = "#620200";
-    ctx.font = "60px Verdana";
+    ctx.font = "60px Mali";
     ctx.fillText("Game Over", 5 * BLOCK_SIZE, 3.5 * BLOCK_SIZE);
-    ctx.font = "30px Verdana";
+    ctx.font = "30px Mali";
     ctx.fillText("Amy couldn't debug", BLOCK_SIZE * 8, 350);
     ctx.fillText("her code and escape", BLOCK_SIZE * 8, 400);
-    ctx.fillText("the bombs ...", BLOCK_SIZE * 8, 450);
+    ctx.fillText("the bombs in time ...", BLOCK_SIZE * 8, 450);
     ctx.fillText("Have a cup of coffee", BLOCK_SIZE * 8, 530);
     ctx.fillText("and try again!", BLOCK_SIZE * 8, 580);
   }
@@ -140,9 +140,9 @@ class Game {
     );
     ctx.drawImage(this.winCharacter, BLOCK_SIZE * 3, BLOCK_SIZE * 2.5, BLOCK_SIZE * 6, BLOCK_SIZE * 6);
     ctx.fillStyle = "#620200";
-    ctx.font = "60px Verdana";
+    ctx.font = "60px Mali";
     ctx.fillText("YOU WIN", 5 * BLOCK_SIZE, 3.5 * BLOCK_SIZE);
-    ctx.font = "30px Verdana";
+    ctx.font = "30px Mali";
     ctx.fillText("Amy's code is", BLOCK_SIZE * 8, 350);
     ctx.fillText("free of bugs", BLOCK_SIZE * 8, 400);
     ctx.fillText("and safely commited", BLOCK_SIZE * 8, 450);
