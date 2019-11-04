@@ -1,25 +1,24 @@
-const backgroundSound = new  Audio("/bug-blaster/sounds/sound1.mp3");
+const backgroundSound = new Audio("./sounds/sound1.mp3");
 backgroundSound.loop = true;
 backgroundSound.volume = 0.5;
 
-function playSong () {
-    backgroundSound.currentTime = 0;
-    backgroundSound.play();
+function playSong() {
+  backgroundSound.currentTime = 0;
+  backgroundSound.play();
 }
 
-function stopSong () {
-    backgroundSound.pause();
+function stopSong() {
+  backgroundSound.pause();
 }
 
-const gameOverSound = new  Audio("/bug-blaster/sounds/game-over-sound.mp3");
+const gameOverSound = new Audio("./sounds/game-over-sound.mp3");
 
-function playGameOver () {
-    gameOverSound.play();
+function playGameOver() {
+  gameOverSound.play();
 }
 
-const gameWinSound = new  Audio("/bug-blaster/sounds/game-win-sound.mp3");
+const gameWinSound = new Audio("./ounds/game-win-sound.mp3");
 
-function playGameWin () {
-    gameWinSound.play();
+function playGameWin() {
+  gameWinSound.play();
 }
-
